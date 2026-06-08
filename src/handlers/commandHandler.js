@@ -79,13 +79,13 @@ Use /settings to configure your preferences.
     bot.sendMessage(chatId, statusMessage);
   });
 
-  // /settings command - Interactive setup
+  // /settings command - NEW INTERACTIVE VERSION
   bot.onText(/^\/settings$/, (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
 
     const settingsMessage = `
-⚙️ Settings & Configuration
+⚙️ Settings & Configuration [UPDATED]
 
 🔐 Account Setup:
 To enable auto-applying bonus codes, I need your stake.com user ID.
