@@ -13,22 +13,24 @@ function extractCodesFromText(text) {
   const patterns = [
     /\b[A-Z0-9]{6,20}\b/g,           // 6-20 uppercase alphanumeric
     /\b[A-Z0-9]{4,}[-_][A-Z0-9]+\b/g,  // With dash or underscore
-    /bonus[\\s-]*code[:\\s]+([A-Z0-9]+)/gi,  // "bonus code: CODE"
-    /promo[\\s-]*code[:\\s]+([A-Z0-9]+)/gi   // "promo code: CODE"
+    /bonus[\s-]*code[:\s]+([A-Z0-9]+)/gi,  // "bonus code: CODE"
+    /promo[\s-]*code[:\s]+([A-Z0-9]+)/gi,  // "promo code: CODE"
+    /code[:\s]+([A-Z0-9]{4,})/gi           // "code: CODE"
   ];
 
   const codes = new Set();
 
   patterns.forEach(pattern => {
-    const matches = text.match(pattern);
-    if (matches) {
-      matches.forEach(match => {
-        // Extract code from groups if it's a captured group
-        const code = match[1] || match;
-        if (code.length >= 4) {
-          codes.add(code.toUpperCase());
-        }
-      });
+    let matches;
+    // Reset regex lastIndex for global patterns
+    if (pattern.global) pattern.lastIndex = 0;
+    
+    while ((matches = pattern.exec(text)) !== null) {
+      // Extract code from groups if it's a captured group, otherwise use the full match
+      const code = matches[1] || matches[0];
+      if (code && code.length >= 4 && code.length <= 20) {
+        codes.add(code.toUpperCase());
+      }
     }
   });
 
@@ -44,13 +46,13 @@ function hasBonusCodeIndicators(text) {
   if (!text) return false;
 
   const indicators = [
-    /bonus\\s*code/gi,
-    /promo\\s*code/gi,
-    /claim\\s*code/gi,
-    /reward\\s*code/gi,
-    /discount\\s*code/gi,
-    /free\\s*code/gi,
-    /code[:\\s]+([A-Z0-9]{4,})/gi
+    /bonus\s*code/gi,
+    /promo\s*code/gi,
+    /claim\s*code/gi,
+    /reward\s*code/gi,
+    /discount\s*code/gi,
+    /free\s*code/gi,
+    /code[:\s]+([A-Z0-9]{4,})/gi
   ];
 
   return indicators.some(indicator => indicator.test(text));
