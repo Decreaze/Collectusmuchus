@@ -34,7 +34,7 @@ I'm a Telegram bot that auto-collects and applies bonus codes to stake.com
 
 🔧 Setup:
 1. Use /settings to configure your account
-2. Add your stake.com user ID
+2. Add your stake.com user ID or username
 3. That's it!
 
 🎯 Features:
@@ -88,11 +88,13 @@ Use /settings to configure your preferences.
 ⚙️ Settings & Configuration [UPDATED]
 
 🔐 Account Setup:
-To enable auto-applying bonus codes, I need your stake.com user ID.
+To enable auto-applying bonus codes, I need your stake.com user ID or username.
 
 📝 Steps:
-1. Reply to this message with: setup YOUR_STAKE_USER_ID
-   Example: setup 12345678
+1. Reply to this message with: setup YOUR_ID_OR_USERNAME
+   Examples: 
+   - setup 12345678 (numeric ID)
+   - setup Decreaze (username)
 
 2. Once configured, I'll automatically:
    ✅ Detect bonus codes in messages
@@ -156,11 +158,11 @@ ${codesList}
     }
   });
 
-  // Handle setup command (setup USER_ID)
-  bot.onText(/^setup\s+(\d+)$/i, async (msg, match) => {
+  // Handle setup command - NOW ACCEPTS BOTH NUMBERS AND USERNAMES
+  bot.onText(/^setup\s+(.+)$/i, async (msg, match) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
-    const stakeUserId = match[1];
+    const stakeId = match[1].trim();
 
     try {
       // Ensure user exists
@@ -192,19 +194,19 @@ ${codesList}
       if (existing.length > 0) {
         await run(
           'UPDATE settings SET setting_value = ? WHERE user_id = ? AND setting_key = ?',
-          [stakeUserId, userDbId, 'stake_user_id']
+          [stakeId, userDbId, 'stake_user_id']
         );
       } else {
         await run(
           'INSERT INTO settings (user_id, setting_key, setting_value) VALUES (?, ?, ?)',
-          [userDbId, 'stake_user_id', stakeUserId]
+          [userDbId, 'stake_user_id', stakeId]
         );
       }
 
       const confirmMessage = `
 ✅ Account Setup Complete!
 
-🎯 Your stake.com User ID: ${stakeUserId}
+🎯 Your stake.com ID: ${stakeId}
 
 🚀 You're all set! Now:
 1. Send me any message with bonus codes
@@ -214,7 +216,7 @@ ${codesList}
 💡 Example: Send "My bonus code is STAKE2024"
        `;
       bot.sendMessage(chatId, confirmMessage);
-      console.log(`✅ User ${userId} set up with stake ID: ${stakeUserId}`);
+      console.log(`✅ User ${userId} set up with stake ID: ${stakeId}`);
     } catch (error) {
       console.error('Error setting up user:', error);
       bot.sendMessage(chatId, `❌ Error setting up account: ${error.message}`);
