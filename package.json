@@ -1,0 +1,28 @@
+{
+  "name": "collectusmuchus",
+  "version": "1.0.0",
+  "description": "Telegram bot for auto-collecting and applying bonus codes to stake.com",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "stake.com",
+    "bonus",
+    "auto-collector"
+  ],
+  "author": "Decreaze",
+  "license": "MIT",
+  "dependencies": {
+    "node-telegram-bot-api": "^0.63.0",
+    "dotenv": "^16.3.1",
+    "axios": "^1.6.2",
+    "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
